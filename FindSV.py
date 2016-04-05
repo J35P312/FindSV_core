@@ -95,7 +95,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID)
         annotation +=scripts["FindSV"]["conda"].format(environment="VEP_FINDSV")
     
     #add frequency database annotation
-    if not annotation_config["DB"]["DB_script_path"] == "":
+    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
         inputVCF=outputVCF
         outputVCF=output_prefix+"_frequency.vcf"
         annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
