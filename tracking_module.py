@@ -93,7 +93,6 @@ def full_restart(prefix,output,tracker,args,config):
     
     #annotate the vcf  
     tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
-    print(tracker)  
     return(tracker)
 #this function is used to restart samples based on their status or a selected step of the pipeline
 def restart(directory,args,config):
@@ -122,11 +121,5 @@ def restart(directory,args,config):
             pass
         if args.failed:
             pass
-            
-    track=[tracker]
-    
-    f = open(os.path.join(directory,"tracker.yml"), 'w')
-    for entry in track:
-        f.write(yaml.dump(entry).strip())
     return(tracker)
             
