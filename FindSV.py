@@ -115,7 +115,7 @@ elif args.install:
     parser.add_argument("--manual",action="store_true",help="the config file is generated, the user have to set each option manually")
     parser.add_argument("--conda",action="store_true",help="Install conda modules, the user needs to install the other software manually as well as to set the path correctly in the config file")
     parser.add_argument("--UPPMAX",action="store_true",help="set the pipeline to run on UPPMAX, install all the required software")
-    args, unknown = parser.parse_known_args()
+    args = parser.parse_args()
     if not os.path.exists(os.path.join(programDirectory,"config.txt")):
         if args.UPPMAX:
             setup.generate_config(programDirectory)
@@ -135,7 +135,7 @@ elif args.update_tracker:
     parser = argparse.ArgumentParser("FindSV core module:tracker module")
     parser.add_argument("--update_tracker",type=str,nargs="*",help="update the tracker of one of a selected output folder(default output if none is chosen)")
     parser.add_argument("--config",type=str, default=None,help="the location of the config file(default= the same folder as the FindSV-core script")
-    args, unknown = parser.parse_known_args()
+    args = parser.parse_args()
     if not args.update_tracker:
         config=readconfig(args.config,args);
         args.update_tracker= [config["FindSV"]["general"]["output"]]
@@ -147,6 +147,14 @@ elif args.update_tracker:
  
 #analyse one single bam file   
 elif args.bam:
+    parser = argparse.ArgumentParser("FindSV core module",add_help=False)
+    parser.add_argument('--bam', type=str,help="analyse the bam file using FindSV")
+    parser.add_argument("--account", type=str,help="The slurm account that will be used to analyse a sample or folder, overrides the account in the config file")
+    parser.add_argument('--output', type=str,default=None,help="the output is stored in this folder")
+    parser.add_argument("--no_tracking",action="store_true",help="run all input samples, even if they already have been analysed")
+    parser.add_argument("--config",type=str, default=None,help="the location of the config file(default= the same folder as the FindSV-core script")
+    args = parser.parse_args()
+
     caller_error=False;annotation_error=False
     try:
         if args.config:
@@ -166,6 +174,15 @@ elif args.bam:
             print("use the install module to generate a config file before running the pipeline")
 #analyse all bamfiles within a folder(recursive searching)
 elif args.folder:
+    parser = argparse.ArgumentParser("FindSV core module",add_help=False)
+    parser.add_argument("--account", type=str,help="The slurm account that will be used to analyse a sample or folder, overrides the account in the config file")
+    parser.add_argument("--folder", type=str,help="analyse every bam file within a folder using FindSV")
+    parser.add_argument('--output', type=str,default=None,help="the output is stored in this folder")
+    parser.add_argument("--no_tracking",action="store_true",help="run all input samples, even if they already have been analysed")
+    parser.add_argument("--config",type=str, default=None,help="the location of the config file(default= the same folder as the FindSV-core script")
+
+    args = parser.parse_args()
+
     caller_error=False;annotation_error=False
     try:
         if args.config:
@@ -198,7 +215,7 @@ elif args.restart:
     parser.add_argument("--full",action="store_true",help="restarts the analysis from scratch")
     parser.add_argument("--restart",type=str,nargs="*",help="restart module: perform the selected restart on the specified folder(default output if none is chosen)")
     parser.add_argument("--config",type=str, default=None,help="the location of the config file(default= the same folder as the FindSV-core script")
-    args, unknown = parser.parse_known_args()
+    args = parser.parse_args()
     if not args.restart:
         config=readconfig(args.config,args);
         args.restart= [config["FindSV"]["general"]["output"]]
