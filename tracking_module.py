@@ -18,20 +18,12 @@ def generate_tracker(directory):
         f.write(yaml.dump(entry).strip())
 
 #add a sample to the tracker file
-def add_sample(ID,input,output,sbatch_id,process,directory,account):
-    with open(os.path.join(directory,"tracker.yml"), 'r') as stream:
-        tracker=yaml.load(stream)
+def add_sample(ID,input,output,sbatch_id,process,directory,account,tracker):
     tracker["FindSV"][process][ID]={"input":input,"output":output,"sbatch":sbatch_id,"status":"SUBMITED","account":account}
-    
-    f = open(os.path.join(directory,"tracker.yml"), 'w')
-    track=[tracker]
-    for entry in track:
-        f.write(yaml.dump(entry).strip())
+    return(tracker)
 
 #update the status of a sample
-def update_status(ID,process,directory):
-    with open(os.path.join(directory,"tracker.yml"), 'r') as stream:
-        tracker=yaml.load(stream)
+def update_status(ID,process,directory,tracker):
     sbatch=tracker["FindSV"][process][ID]["sbatch"]
     
     SLURM_EXIT_CODES = {"PENDING": "PENDING","RUNNING": "RUNNING","RESIZING": "RUNNING","SUSPENDED": "RUNNING","COMPLETED": "COMPLETED","CANCELLED": "CANCELLED","FAILED": "FAILED",
@@ -44,9 +36,6 @@ def update_status(ID,process,directory):
     except:
         tracker["FindSV"][process][ID]["status"] = "CONNECTION_ERROR"
         f = open(os.path.join(directory,"tracker.yml"), 'w')
-        track=[tracker]
-        for entry in track:
-            f.write(yaml.dump(entry).strip())
         return(tracker)
 
     if not job_status:
@@ -62,10 +51,6 @@ def update_status(ID,process,directory):
             tracker["FindSV"][process][ID]["status"] = SLURM_EXIT_CODES[status]
         except (IndexError, KeyError, TypeError) as e:
             tracker["FindSV"][process][ID]["status"] = "UNKNOWN"
-        f = open(os.path.join(directory,"tracker.yml"), 'w')
-        track=[tracker]
-        for entry in track:
-            f.write(yaml.dump(entry).strip())
         return(tracker)
 
 #update the status of each sample within the tracker
@@ -74,7 +59,10 @@ def update_tracker(directory):
         tracker=yaml.load(stream)
         for process in tracker["FindSV"]:
             for sample in tracker["FindSV"][process]:
-                update_status(sample,process,directory)
+                tracker=update_status(sample,process,directory,tracker)
+    f = open(os.path.join(directory,"tracker.yml"), 'w')
+    f.write(yaml.dump(tracker).strip())
+    return(tracker)
 
 #restart all steps of all samples within the project               
 def full_restart(prefix,output,tracker,args,config):
@@ -94,6 +82,47 @@ def full_restart(prefix,output,tracker,args,config):
     #annotate the vcf  
     tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
     return(tracker)
+
+def combine_restart(prefix,output,tracker,args,config):
+    print("restarting sample:{}".format(prefix))
+    account=tracker["FindSV"]["FindTranslocations"][prefix]["account"]
+    args.bam=tracker["FindSV"]["FindTranslocations"][prefix]["input"]
+
+    #clear the combine and annotation status
+    for process in tracker["FindSV"]:
+        if process == "combine" or process == "annotation":
+            del tracker["FindSV"][process][prefix]
+
+    #run the sample
+    tracker,caller_vcf,sbatch_ID = submit_module.run_callers(tracker,args,output,config,account)
+    #combine them
+    tracker,combine_vcf,combine_ID = submit_module.run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID)
+    
+    #annotate the vcf  
+    tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
+    return(tracker)
+
+
+def annotation_restart(prefix,output,tracker,args,config):
+    print("restarting sample:{}".format(prefix))
+    account=tracker["FindSV"]["FindTranslocations"][prefix]["account"]
+    args.bam=tracker["FindSV"]["FindTranslocations"][prefix]["input"]
+
+    #clear the combine and annotation status
+    for process in tracker["FindSV"]:
+        if process == "annotation":
+            del tracker["FindSV"][process][prefix]
+
+    #run the sample
+    tracker,caller_vcf,sbatch_ID = submit_module.run_callers(tracker,args,output,config,account)
+    #combine them
+    tracker,combine_vcf,combine_ID = submit_module.run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID)
+    
+    #annotate the vcf  
+    tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
+    return(tracker)
+
+
 #this function is used to restart samples based on their status or a selected step of the pipeline
 def restart(directory,args,config):
     #update the tracker before loading it
@@ -106,14 +135,21 @@ def restart(directory,args,config):
         for prefix in prefix_list:
             args.prefix=prefix
             tracker=full_restart(prefix,directory,tracker,args,config)
-            
+
+    #restart the combine step of all the samples     
     elif args.combine:
-        print("not implemented")
-        pass
+        prefix_list = list(tracker["FindSV"]["combine"].keys() )
+        for prefix in prefix_list:
+            args.prefix=prefix
+            tracker=combine_restart(prefix,directory,tracker,args,config)
+
     #redo the annotation on all samples
     elif args.annotation:
-        print("not implemented")
-        pass
+        prefix_list = list(tracker["FindSV"]["annotation"].keys() )
+        for prefix in prefix_list:
+            args.prefix=prefix
+            tracker=annotation_restart(prefix,directory,tracker,args,config)
+
     #restart only the failed or cancelled samples
     elif args.cancelled or failed:
         print("not implemented")
@@ -121,5 +157,8 @@ def restart(directory,args,config):
             pass
         if args.failed:
             pass
+
+    f = open(os.path.join(directory,"tracker.yml"), 'w')
+    f.write(yaml.dump(tracker).strip())
     return(tracker)
             

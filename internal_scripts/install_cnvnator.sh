@@ -1,3 +1,4 @@
+#!/bin/bash
 cd $1
 #install root and ad it to path
 
@@ -17,9 +18,9 @@ fi
 wget https://root.cern.ch/download/${rootver}.tar.gz
 tar -xvf ${rootver}.tar.gz
 
-#cd root/bin/
-#source thisroot.sh
-#cd $1
+cd root/bin/
+source thisroot.sh
+cd $1
 #download and install cnvnator
 wget https://github.com/abyzovlab/CNVnator/releases/download/v0.3.1/CNVnator_v0.3.1.zip
 unzip CNVnator_v0.3.1.zip

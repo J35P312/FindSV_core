@@ -55,7 +55,7 @@ def main(args):
     prefix=args.bam.split("/")[-1]
     args.prefix=prefix.replace(".bam","")
     
-    
+
     with open(os.path.join(output,"tracker.yml"), 'r') as stream:
         tracker=yaml.load(stream)
     
@@ -70,7 +70,9 @@ def main(args):
     
     #annotate the vcf  
     tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
-
+    f = open(os.path.join(output,"tracker.yml"), 'w')
+    f.write(yaml.dump(tracker).strip())
+    f.close()
 
 parser = argparse.ArgumentParser("FindSV core module",add_help=False)
 parser.add_argument('--bam', type=str,help="analyse the bam file using FindSV")
@@ -115,13 +117,17 @@ elif args.install:
     parser.add_argument("--UPPMAX",action="store_true",help="set the pipeline to run on UPPMAX, install all the required software")
     args, unknown = parser.parse_known_args()
     if not os.path.exists(os.path.join(programDirectory,"config.txt")):
-        setup.generate_config(programDirectory)
         if args.UPPMAX:
+            setup.generate_config(programDirectory)
             setup.UPPMAX(programDirectory)
         elif args.conda:
+            setup.generate_config(programDirectory)
             setup.conda(programDirectory)
         elif args.auto:
+            setup.generate_config(programDirectory)
             setup.auto(programDirectory)
+        else:
+            print("invalid option, type \"python FindSV.py --install --help\" for more information on the install module");
     else:
         print("warning: a config file is already installed, delete it or move before generating another one")
 #update the status of analysed files   
@@ -133,8 +139,11 @@ elif args.update_tracker:
     if not args.update_tracker:
         config=readconfig(args.config,args);
         args.update_tracker= [config["FindSV"]["general"]["output"]]
-    for tracker in args.update_tracker:
-        tracking_module.update_tracker(tracker)
+    for folder in args.update_tracker:
+        tracker=tracking_module.update_tracker(folder)
+        f = open(os.path.join(folder,"tracker.yml"), 'w')
+        f.write(yaml.dump(tracker).strip())
+        f.close()
  
 #analyse one single bam file   
 elif args.bam:

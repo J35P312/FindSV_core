@@ -12,14 +12,13 @@ def run_callers(tracker,args,output,config,account):
         outputVCF,sbatch_ID=calling(args,config,output,scripts,programDirectory,account)
         caller_output=outputVCF.split()
 
-        tracking_module.add_sample(args.prefix,args.bam,[caller_output[0],caller_output[1]],sbatch_ID[0],"FindTranslocations",output,account)
-        tracking_module.add_sample(args.prefix,args.bam,[caller_output[2]],sbatch_ID[1],"CNVnator",output,account)
+        tracker = tracking_module.add_sample(args.prefix,args.bam,[caller_output[0],caller_output[1]],sbatch_ID[0],"FindTranslocations",output,account,tracker)
+        tracker = tracking_module.add_sample(args.prefix,args.bam,[caller_output[2]],sbatch_ID[1],"CNVnator",output,account,tracker)
         caller_vcf=outputVCF
     else:
-        tracker=tracking_module.update_status(args.prefix,"CNVnator",output)
-        tracker=tracking_module.update_status(args.prefix,"FindTranslocations",output)
+        tracker=tracking_module.update_status(args.prefix,"CNVnator",output,tracker)
+        tracker=tracking_module.update_status(args.prefix,"FindTranslocations",output,tracker)
         vcf_output=tracker["FindSV"]["CNVnator"][args.prefix]["output"]+tracker["FindSV"]["FindTranslocations"][args.prefix]["output"]
-        print(" ".join(vcf_output))
         caller_vcf=" ".join(vcf_output)
         sbatch_ID=[tracker["FindSV"]["CNVnator"][args.prefix]["sbatch"],tracker["FindSV"]["FindTranslocations"][args.prefix]["sbatch"]]
     return(tracker,caller_vcf,sbatch_ID)
@@ -30,11 +29,12 @@ def run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID):
     programDirectory = os.path.dirname(os.path.abspath(__file__))
     if not args.prefix in tracker["FindSV"]["combine"]: 
         outputVCF,combine_ID=combine_module(args,config,output,scripts,programDirectory,caller_vcf,sbatch_ID,account)
-        tracking_module.add_sample(args.prefix,caller_vcf,[outputVCF],combine_ID,"combine",output,account)
+        print(outputVCF)
+        tracker=tracking_module.add_sample(args.prefix,caller_vcf,[outputVCF],combine_ID,"combine",output,account,tracker)
         combine_vcf=outputVCF
         
     else:
-        tracker=tracking_module.update_status(args.prefix,"combine",output)
+        tracker=tracking_module.update_status(args.prefix,"combine",output,tracker)
         combine_vcf=tracker["FindSV"]["combine"][args.prefix]["output"]
         combine_ID=tracker["FindSV"]["combine"][args.prefix]["sbatch"]
     return(tracker,combine_vcf,combine_ID)        
@@ -45,9 +45,9 @@ def run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID):
     programDirectory = os.path.dirname(os.path.abspath(__file__))
     if not args.prefix in tracker["FindSV"]["annotation"]:
         outputVCF,annotation_ID=annotation(args,config,output,scripts,programDirectory,combine_vcf,combine_ID,account)   
-        tracking_module.add_sample(args.prefix,combine_vcf,[outputVCF],annotation_ID,"annotation",output,account)
+        tracker=tracking_module.add_sample(args.prefix,combine_vcf,[outputVCF],annotation_ID,"annotation",output,account,tracker)
     else:
-        tracker=tracking_module.update_status(args.prefix,"annotation",output)
+        tracker=tracking_module.update_status(args.prefix,"annotation",output,tracker)
     return(tracker)
     
 #the module used to perform the variant calling
