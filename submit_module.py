@@ -29,7 +29,6 @@ def run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID):
     programDirectory = os.path.dirname(os.path.abspath(__file__))
     if not args.prefix in tracker["FindSV"]["combine"]: 
         outputVCF,combine_ID=combine_module(args,config,output,scripts,programDirectory,caller_vcf,sbatch_ID,account)
-        print(outputVCF)
         tracker=tracking_module.add_sample(args.prefix,caller_vcf,[outputVCF],combine_ID,"combine",output,account,tracker)
         combine_vcf=outputVCF
         
@@ -37,6 +36,8 @@ def run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID):
         tracker=tracking_module.update_status(args.prefix,"combine",output,tracker)
         combine_vcf=tracker["FindSV"]["combine"][args.prefix]["output"]
         combine_ID=tracker["FindSV"]["combine"][args.prefix]["sbatch"]
+        combine_vcf=combine_vcf[0]
+
     return(tracker,combine_vcf,combine_ID)        
 
 def run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID):

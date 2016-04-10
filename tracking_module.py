@@ -78,7 +78,7 @@ def full_restart(prefix,output,tracker,args,config):
     tracker,caller_vcf,sbatch_ID = submit_module.run_callers(tracker,args,output,config,account)
     #combine them
     tracker,combine_vcf,combine_ID = submit_module.run_combine(tracker,args,output,config,account,caller_vcf,sbatch_ID)
-    
+    print(combine_vcf)
     #annotate the vcf  
     tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
     return(tracker)
