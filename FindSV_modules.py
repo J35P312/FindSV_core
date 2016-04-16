@@ -19,7 +19,7 @@ def main():
 
     #the FT script
     FT="""
-{FT_path} --sv  -bam {bam_path} -pairs {minimum_suporting} -o {output}
+{FT_path} --sv  -b {bam_path} -p {minimum_suporting} -o {output}
 rm {output}.tab"""
     
     #the cnvnator script
