@@ -57,7 +57,7 @@ rm {output_vcf}.unsorted"""
 
 """
     #the DB section
-    DB="python {query_script} --variations {input_vcf} --db {db_folder_path} > {output_vcf}\n"
+    DB="python {query_script} --query --query_vcf {input_vcf} --db {db_folder_path} > {output_vcf}\n"
     #the vep section
     VEP="perl {vep_path} --cache --force_overwrite --poly b -i {input_vcf} -o {output_vcf} --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n"
     UPPMAX_VEP="variant_effect_predictor.pl --cache --force_overwrite --poly b -i {input_vcf}  -o {output_vcf} --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n"

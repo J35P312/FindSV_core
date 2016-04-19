@@ -44,34 +44,40 @@ def conda_environments(config,programDirectory):
 def FT_install(config,programDirectory,UPPMAX):
     print("installing FindTranslocations")
     config["FindSV"]["calling"]["FT"]["FT_path"]=os.path.join(programDirectory,"FindTranslocations/bin/FindTranslocations")
-    config["FindSV"]["annotation"]["DB"]["DB_script_path"]=os.path.join(programDirectory,"FindTranslocations/scipts/query_db.py")
-    if UPPMAX:
-        command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_FT_uppmax.sh"),programDirectory)]
-    else:
-        command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_FT.sh"),programDirectory)]
+    
+    command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_FT.sh"),programDirectory)]
     tmp=subprocess.check_output(command,shell = True)
     
     return(config)
 
 #install cnvnator
+def SVDB_install(config,programDirectory)
+        config["FindSV"]["annotation"]["DB"]["DB_script_path"]=os.path.join(programDirectory,"SVDB/SVDB.py")
+        command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_SVDB.sh"),programDirectory)]
+        tmp=subprocess.check_output(command,shell = True)
+    return(config)
+
+
 def cnvnator_install(config,programDirectory,args):
 
     if not args.no_root:
         config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/src/cnvnator")
         config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/cnvnator2VCF.pl")
+        config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=os.path.join(programDirectory,"root")
 
         if not args.compile_root:
-            config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=os.path.join(programDirectory,"root")
             env = os.environ.copy()
             env["ROOTSYS"]= config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]
             env["ROOTLIB"]= os.path.join(config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"],"lib")
             command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator.sh"),programDirectory)]
+            tmp=subprocess.check_output(command,shell = True,env=env)
         else:
             command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator_compile_root.sh"),programDirectory)]
+            tmp=subprocess.check_output(command,shell = True)
     else:
         command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator_no_root.sh"),programDirectory)]
+        tmp=subprocess.check_output(command,shell = True)
 
-    tmp=subprocess.check_output(command,shell = True,env=env)
         
     return(config)
     
