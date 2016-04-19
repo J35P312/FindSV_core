@@ -54,14 +54,23 @@ def FT_install(config,programDirectory,UPPMAX):
     return(config)
 
 #install cnvnator
-def cnvnator_install(config,programDirectory):
-    config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/src/cnvnator")
-    config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/cnvnator2VCF.pl")
-    config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=os.path.join(programDirectory,"root")
-    env = os.environ.copy()
-    env["ROOTSYS"]= config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]
-    env["ROOTLIB"]= os.path.join(config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"],"lib")
-    command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator.sh"),programDirectory)]
+def cnvnator_install(config,programDirectory,args):
+
+    if not args.no_root:
+        config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/src/cnvnator")
+        config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/cnvnator2VCF.pl")
+
+        if not args.compile_root:
+            config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=os.path.join(programDirectory,"root")
+            env = os.environ.copy()
+            env["ROOTSYS"]= config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]
+            env["ROOTLIB"]= os.path.join(config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"],"lib")
+            command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator.sh"),programDirectory)]
+        else:
+            command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator_compile_root.sh"),programDirectory)]
+    else:
+        command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_cnvnator_no_root.sh"),programDirectory)]
+
     tmp=subprocess.check_output(command,shell = True,env=env)
         
     return(config)
@@ -148,14 +157,14 @@ def conda(programDirectory):
     f.write(yaml.dump(config).strip())
     
 #automatic install on any system
-def auto(programDirectory):
+def auto(programDirectory,args):
     config=readconfig(0,os.path.join(programDirectory,"config.txt"));
     #install conda environments
     config=conda_environments(config,programDirectory)
     #install ft
     config=FT_install(config,programDirectory,True)
     #install cnvnator
-    config=cnvnator_install(config,programDirectory)
+    config=cnvnator_install(config,programDirectory,args)
     print("leave blank to exit setup, enter anything else to continue setting up path to the annotation tools and references")
     if raw_input() == "":
         print("installation finished!")
