@@ -26,6 +26,12 @@ prerequisites
 
 to run FindSV-core on the uppmax system.
 
+Restart module
+============
+for info on how to restart samples analysed by the FIndSV-core pipeline, type:
+        python FindSV.py --restart
+
+
 Settings
 =========
 
