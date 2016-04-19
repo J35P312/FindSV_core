@@ -27,7 +27,7 @@ def update_status(ID,process,directory,tracker):
     sbatch=tracker["FindSV"][process][ID]["sbatch"]
     
     SLURM_EXIT_CODES = {"PENDING": "PENDING","RUNNING": "RUNNING","RESIZING": "RUNNING","SUSPENDED": "RUNNING","COMPLETED": "COMPLETED","CANCELLED": "CANCELLED","FAILED": "FAILED",
-    "TIMEOUT": "TIMEOUT","PREEMPTED": "FAILED","BOOT_FAIL": "FAILED","NODE_FAIL": "FAILED"}
+    "TIMEOUT": "FAILED","PREEMPTED": "FAILED","BOOT_FAIL": "FAILED","NODE_FAIL": "FAILED"}
 
     #try connect to sbatch using sacct, if we cannot fetch the status, there is probably some temporal error
     try:
@@ -122,6 +122,19 @@ def annotation_restart(prefix,output,tracker,args,config):
     tracker=submit_module.run_annotation(tracker,args,output,config,account,combine_vcf,combine_ID)
     return(tracker)
 
+def status(prefix,output,tracker,args,config):
+    keyword="FAILED"
+    if(args.cancelled):
+        keyword="CANCELLED"
+
+    if tracker["FindSV"]["FindTranslocations"][prefix]["status"] == keyword or tracker["FindSV"]["CNVnator"][prefix]["status"] == keyword:
+        tracker=full_restart(prefix,output,tracker,args,config)
+    elif tracker["FindSV"]["combine"][prefix]["status"] == keyword:
+        tracker=combine_restart(prefix,output,tracker,args,config)
+    elif tracker["FindSV"]["annotation"][prefix]["status"] == keyword:
+        tracker=annotation_restart(prefix,output,tracker,args,config)
+    return(tracker)
+
 
 #this function is used to restart samples based on their status or a selected step of the pipeline
 def restart(directory,args,config):
@@ -151,12 +164,11 @@ def restart(directory,args,config):
             tracker=annotation_restart(prefix,directory,tracker,args,config)
 
     #restart only the failed or cancelled samples
-    elif args.cancelled or failed:
-        print("not implemented")
-        if args.cancelled:
-            pass
-        if args.failed:
-            pass
+    elif args.cancelled or args.failed:
+        prefix_list = list(tracker["FindSV"]["FindTranslocations"].keys() )
+        for prefix in prefix_list:
+            args.prefix=prefix
+            tracker=status(prefix,directory,tracker,args,config)
 
     f = open(os.path.join(directory,"tracker.yml"), 'w')
     f.write(yaml.dump(tracker).strip())

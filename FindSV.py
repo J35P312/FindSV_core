@@ -115,6 +115,7 @@ elif args.install:
     parser.add_argument("--manual",action="store_true",help="the config file is generated, the user have to set each option manually")
     parser.add_argument("--conda",action="store_true",help="Install conda modules, the user needs to install the other software manually as well as to set the path correctly in the config file")
     parser.add_argument("--UPPMAX",action="store_true",help="set the pipeline to run on UPPMAX, install all the required software")
+    parser.add_argument("--install",action="store_true",help="Install the FindSV pipeline")
     args = parser.parse_args()
     if not os.path.exists(os.path.join(programDirectory,"config.txt")):
         if args.UPPMAX:
