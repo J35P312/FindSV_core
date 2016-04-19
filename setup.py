@@ -35,7 +35,8 @@ def conda_environments(config,programDirectory):
     config["FindSV"]["conda"]["genmod"]="True"
     config["FindSV"]["conda"]["samtools"]="True"
     config["FindSV"]["conda"]["vep"]="True"
-    command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/CONDA/create_conda_env.sh"), os.path.join(programDirectory,"internal_scripts/CONDA/"))]
+    config["FindSV"]["annotation"]["DB"]["DB_script_path"]=os.path.join(programDirectory,"SVDB/SVDB.py")
+    command=["{} {} {}".format(os.path.join(programDirectory,"internal_scripts/CONDA/create_conda_env.sh"), os.path.join(programDirectory,"internal_scripts/CONDA/"), programDirectory)]
     tmp=subprocess.check_output(command,shell = True)
     
     return(config)
@@ -49,14 +50,6 @@ def FT_install(config,programDirectory,UPPMAX):
     tmp=subprocess.check_output(command,shell = True)
     
     return(config)
-
-#install cnvnator
-def SVDB_install(config,programDirectory)
-        config["FindSV"]["annotation"]["DB"]["DB_script_path"]=os.path.join(programDirectory,"SVDB/SVDB.py")
-        command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_SVDB.sh"),programDirectory)]
-        tmp=subprocess.check_output(command,shell = True)
-    return(config)
-
 
 def cnvnator_install(config,programDirectory,args):
 
