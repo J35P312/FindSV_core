@@ -112,7 +112,7 @@ elif args.install:
     
     parser = argparse.ArgumentParser("FindSV core module:Install module")
     parser.add_argument("--auto",action="store_true",help="install all required software automaticaly")
-    parser.add_argument("--no_root",action="store_true",help="used with the auto option, root(5.34) will not be installed, and is assumed to be added to path")
+    parser.add_argument("--no_root",action="store_true",help="used with the auto option, root will not be installed, and is assumed to be added to path")
     parser.add_argument("--compile_root",action="store_true",help="used with the auto option, used to compile root from source(used if the --auto option fails at cnvnator install step)")
     parser.add_argument("--manual",action="store_true",help="the config file is generated, the user have to set each option manually")
     parser.add_argument("--conda",action="store_true",help="Install conda modules, the user needs to install the other software manually as well as to set the path correctly in the config file")
