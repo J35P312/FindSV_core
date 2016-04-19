@@ -52,10 +52,10 @@ def FT_install(config,programDirectory,UPPMAX):
     return(config)
 
 def cnvnator_install(config,programDirectory,args):
+    config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/src/cnvnator")
+    config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/cnvnator2VCF.pl")
 
     if not args.no_root:
-        config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/src/cnvnator")
-        config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=os.path.join(programDirectory,"CNVnator_v0.3.1/cnvnator2VCF.pl")
         config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=os.path.join(programDirectory,"root")
 
         if not args.compile_root:
