@@ -44,9 +44,9 @@ def update_status(ID,process,directory,tracker):
         #if a sample failed or timed out, print it to the stoud
         status=job_status.split()[0].strip("+")
         if SLURM_EXIT_CODES[status] == "FAILED":
-            print "sample {0} FAILED:{}".format(status)
+            print "sample {0} FAILED:{1}".format(ID,status)
         elif SLURM_EXIT_CODES[status] == "TIMEOUT":
-            print "sample {0} ERROR:{}".format(status)
+            print "sample {0} ERROR:{1}".format(ID,status)
         try:
             tracker["FindSV"][process][ID]["status"] = SLURM_EXIT_CODES[status]
         except (IndexError, KeyError, TypeError) as e:
