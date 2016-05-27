@@ -44,7 +44,7 @@ def conda_environments(config,programDirectory):
 #install FT
 def FT_install(config,programDirectory,UPPMAX):
     print("installing FindTranslocations")
-    config["FindSV"]["calling"]["FT"]["FT_path"]=os.path.join(programDirectory,"FindTranslocations/bin/FindTranslocations")
+    config["FindSV"]["calling"]["FT"]["FT_path"]=os.path.join(programDirectory,"FindTranslocations/bin/TIDDIT")
     
     command=["{} {}".format(os.path.join(programDirectory,"internal_scripts/install_FT.sh"),programDirectory)]
     tmp=subprocess.check_output(command,shell = True)
