@@ -96,6 +96,7 @@ def calling(args,config,output,scripts,programDirectory,account):
 #the module used to perform the combining of multiple callers
 def combine_module(args,config,output,scripts,programDirectory,input_vcf,sbatch_ID,account):
     general_config=config["FindSV"]["general"]
+    annotation_config=config["FindSV"]["annotation"]
     #combine module; combine all the caller modules into one VCF
     prefix=args.prefix
     output_prefix=os.path.join(output,prefix)
@@ -112,7 +113,7 @@ def combine_module(args,config,output,scripts,programDirectory,input_vcf,sbatch_
     elif not config["FindSV"]["conda"]["samtools"] == "":
         combine +=scripts["FindSV"]["conda"].format(environment="samtools_FINDSV")
     outputVCF=output_prefix+"_FindSV.vcf"
-    combine += scripts["FindSV"]["combine"]["combine"].format(output=output_prefix,merge_vcf_path=merge_VCF_path,input_vcf=input_vcf,contig_sort_path=contig_sort,bam_path=args.bam,output_vcf=outputVCF)
+    combine += scripts["FindSV"]["combine"]["combine"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=input_vcf,contig_sort_path=contig_sort,bam_path=args.bam,output_vcf=outputVCF)
     combine_ID=submitSlurmJob( os.path.join(output,"slurm/combine/combine_{}.slurm".format(prefix)) , combine)
     
     return(outputVCF,combine_ID)
@@ -129,20 +130,20 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     annotation = scripts["FindSV"]["header"].format(account=account,time="10:00:00",name=job_name,filename=process_files)
     annotation += scripts["FindSV"]["annotation"]["header"].format(combine_script_id=combine_ID)
     
-    #if uppmax modules are chosen, the vep module is loaded
-    if not general_config["UPPMAX"] == "":
-        annotation +=scripts["FindSV"]["UPPMAX"].format(modules="bioinfo-tools vep")
-    #otherwise if the vep conda environment is installed, we will use it
-    elif not config["FindSV"]["conda"]["vep"] == "":
-        annotation +=scripts["FindSV"]["conda"].format(environment="VEP_FINDSV")
-    
     #add frequency database annotation
     if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
         inputVCF=outputVCF
         outputVCF=output_prefix+"_frequency.vcf"
         annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
     cache_dir=""
-    
+
+    #if uppmax modules are chosen, the vep module is loaded
+    if not general_config["UPPMAX"] == "":
+        annotation +=scripts["FindSV"]["UPPMAX"].format(modules="bioinfo-tools vep")
+    #otherwise if the vep conda environment is installed, we will use it
+    elif not config["FindSV"]["conda"]["vep"] == "":
+        annotation +=scripts["FindSV"]["conda"].format(environment="VEP_FINDSV")
+        
     #add vep annotation
     if not annotation_config["VEP"]["cache_dir"] == "":
         cache_dir=" --dir {}".format(annotation_config["VEP"]["cache_dir"])

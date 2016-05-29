@@ -46,7 +46,7 @@ rm {output}.cnvnator.out
     
     #The combine script
     combine="""
-python {merge_vcf_path} --vcf {input_vcf} > {output_vcf}.unsorted
+python {merge_vcf_path} --merge --vcf {input_vcf} > {output_vcf}.unsorted
 python {contig_sort_path} --vcf {output_vcf}.unsorted --bam {bam_path} > {output_vcf}
 rm {output_vcf}.unsorted"""
     combine={"combine":combine}
