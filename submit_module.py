@@ -171,6 +171,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     #create a final cleaned vcf
     inputVCF=outputVCF
     outputVCF=output_prefix+"_merged.vcf"
+    annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
     annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
     inputVCF=outputVCF
     outputVCF=output_prefix+"_cleaned.vcf"
