@@ -113,7 +113,7 @@ def combine_module(args,config,output,scripts,programDirectory,input_vcf,sbatch_
     elif not config["FindSV"]["conda"]["samtools"] == "":
         combine +=scripts["FindSV"]["conda"].format(environment="samtools_FINDSV")
     outputVCF=output_prefix+"_FindSV.vcf"
-    combine += scripts["FindSV"]["combine"]["combine"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=input_vcf,contig_sort_path=contig_sort,bam_path=args.bam,output_vcf=outputVCF)
+    combine += scripts["FindSV"]["combine"]["combine"].format(output=output_prefix,merge_vcf_path=merge_VCF_path,input_vcf=input_vcf,contig_sort_path=contig_sort,bam_path=args.bam,output_vcf=outputVCF)
     combine_ID=submitSlurmJob( os.path.join(output,"slurm/combine/combine_{}.slurm".format(prefix)) , combine)
     
     return(outputVCF,combine_ID)
@@ -123,6 +123,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     general_config=config["FindSV"]["general"]
     prefix=args.prefix
     output_prefix=os.path.join(output,prefix)
+
     #annotation module; filter and annotate the samples
     annotation_config=config["FindSV"]["annotation"]
     job_name="annotation_{}".format(prefix)
@@ -168,6 +169,9 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         outputVCF=output_prefix+"_genmod.vcf"
         annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
     #create a final cleaned vcf
+    inputVCF=outputVCF
+    outputVCF=output_prefix+"_merged.vcf"
+    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
     inputVCF=outputVCF
     outputVCF=output_prefix+"_cleaned.vcf"
     clean_VCF_path=os.path.join(programDirectory,"internal_scripts","cleanVCF.py")
