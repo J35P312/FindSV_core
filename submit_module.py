@@ -139,6 +139,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         annotation +=scripts["FindSV"]["conda"].format(environment="VEP_FINDSV")
         
     #add vep annotation
+    cache_dir=""
     if not annotation_config["VEP"]["cache_dir"] == "":
         cache_dir=" --dir {}".format(annotation_config["VEP"]["cache_dir"])
     
@@ -166,7 +167,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         inputVCF=outputVCF
         outputVCF=output_prefix+"_frequency.vcf"
         annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
-    cache_dir=""
+
 
 
 
