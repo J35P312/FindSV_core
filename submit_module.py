@@ -156,6 +156,11 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
 
     #merge the breakpoints
     inputVCF=outputVCF
+    if not general_config["UPPMAX"] == "":
+        annotation +=scripts["FindSV"]["UPPMAX"].format(modules="bioinfo-tools samtools")
+    #if we are not on uppmax and the samtools conda module is installed
+    elif not config["FindSV"]["conda"]["samtools"] == "":
+        annotation +=scripts["FindSV"]["conda"].format(environment="samtools_FINDSV")
 
     outputVCF=output_prefix+"_merged.vcf"
     contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
