@@ -131,13 +131,6 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     annotation = scripts["FindSV"]["header"].format(account=account,time="10:00:00",name=job_name,filename=process_files)
     annotation += scripts["FindSV"]["annotation"]["header"].format(combine_script_id=combine_ID)
     
-    #add frequency database annotation
-    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
-        inputVCF=outputVCF
-        outputVCF=output_prefix+"_frequency.vcf"
-        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
-    cache_dir=""
-
     #if uppmax modules are chosen, the vep module is loaded
     if not general_config["UPPMAX"] == "":
         annotation +=scripts["FindSV"]["UPPMAX"].format(modules="bioinfo-tools vep")
@@ -160,6 +153,23 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         outputVCF=output_prefix+"_vep.vcf"
         annotation += scripts["FindSV"]["annotation"]["VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF)
 
+    #merge the breakpoints
+    inputVCF=outputVCF
+    outputVCF=output_prefix+"_merged.vcf"
+    annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
+    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+    inputVCF=outputVCF
+
+
+    #add frequency database annotation
+    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
+        inputVCF=outputVCF
+        outputVCF=output_prefix+"_frequency.vcf"
+        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+    cache_dir=""
+
+
+
     #add genmod annotation
     if not annotation_config["GENMOD"]["GENMOD_rank_model_path"] == "":
         #use the genmod conda module if the user wishes to do so
@@ -168,12 +178,8 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         inputVCF=outputVCF
         outputVCF=output_prefix+"_genmod.vcf"
         annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
-    #create a final cleaned vcf
-    inputVCF=outputVCF
-    outputVCF=output_prefix+"_merged.vcf"
-    annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
-    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
-    inputVCF=outputVCF
+   
+ #create a final cleaned vcf
     outputVCF=output_prefix+"_cleaned.vcf"
     clean_VCF_path=os.path.join(programDirectory,"internal_scripts","cleanVCF.py")
     annotation += scripts["FindSV"]["annotation"]["cleaning"].format(output=output_prefix,VCFTOOLS_path=clean_VCF_path,input_vcf=inputVCF,output_vcf=outputVCF)
