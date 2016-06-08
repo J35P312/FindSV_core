@@ -65,8 +65,7 @@ rm {output_vcf}.unsorted"""
     GENMOD="genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}\n"
     merge="""python {merge_vcf_path} --merge --vcf {input_vcf} > {output_vcf}.unsorted
 python {contig_sort_path} --vcf {output_vcf}.unsorted --bam {bam_path} > {output_vcf}
-rm {output_vcf}.unsorted"""
-
+rm {output_vcf}.unsorted
 """
     cleaning="python {VCFTOOLS_path} --vcf {input_vcf} > {output_vcf} \n"
     filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning}
