@@ -156,9 +156,11 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
 
     #merge the breakpoints
     inputVCF=outputVCF
+
     outputVCF=output_prefix+"_merged.vcf"
+    contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
     annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
-    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF,contig_sort_path=contig_sort,bam_path=args.bam)
     inputVCF=outputVCF
 
 
