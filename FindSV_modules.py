@@ -63,12 +63,13 @@ rm {output_vcf}.unsorted"""
     UPPMAX_VEP="variant_effect_predictor.pl --cache --force_overwrite --poly b -i {input_vcf}  -o {output_vcf} --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n"
     #the genmod section
     GENMOD="genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}\n"
-    merge="""python {merge_vcf_path} --merge --overlap 0.999 --vcf {input_vcf} > {output_vcf}.unsorted
-python {contig_sort_path} --vcf {output_vcf}.unsorted --bam {bam_path} > {output_vcf}
-rm {output_vcf}.unsorted
+    merge="python {merge_vcf_path} --merge --overlap 0.999 --vcf {input_vcf} > {output_vcf}"
+    sort="""python {contig_sort_path} --vcf {input_vcf}.unsorted --bam {bam_path} > {output_vcf}
+rm {input_vcf}
 """
+    
     cleaning="python {VCFTOOLS_path} --vcf {input_vcf} > {output_vcf} \n"
-    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning}
+    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort",sort}
     
     
     scripts={"FindSV":{"calling":calling,"annotation":filter,"combine":combine,"header":header,"UPPMAX":uppmax,"afterok":"\n#SBATCH -d afterok:{slurm_IDs}\n","ROOTSYS":ROOTPATH,"conda":conda}}
