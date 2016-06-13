@@ -69,7 +69,7 @@ rm {input_vcf}
 """
     
     cleaning="python {VCFTOOLS_path} --vcf {input_vcf} > {output_vcf} \n"
-    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort",sort}
+    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort":sort}
     
     
     scripts={"FindSV":{"calling":calling,"annotation":filter,"combine":combine,"header":header,"UPPMAX":uppmax,"afterok":"\n#SBATCH -d afterok:{slurm_IDs}\n","ROOTSYS":ROOTPATH,"conda":conda}}
