@@ -162,16 +162,23 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     
     #merge the breakpoints
     inputVCF=outputVCF
+    outputVCF=output_prefix+"_merged.vcf"
+    contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
+    annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
+    annotation += scripts["FindSV"]["annotation"]["merge"].format(merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+    
+    #sort according to the contig order of the reference
+    inputVCF=outputVCF
+    outputVCF=output_prefix+"_contigSort.vcf"
     if not general_config["UPPMAX"] == "":
         annotation +=scripts["FindSV"]["UPPMAX"].format(modules="bioinfo-tools samtools")
     #if we are not on uppmax and the samtools conda module is installed
     elif not config["FindSV"]["conda"]["samtools"] == "":
         annotation +=scripts["FindSV"]["conda"].format(environment="samtools_FINDSV")
+    
+    annotation += scripts["FindSV"]["annotation"]["sort"].format(input_vcf=inputVCF,output_vcf=outputVCF,contig_sort_path=contig_sort,bam_path=args.bam)
 
-    outputVCF=output_prefix+"_merged.vcf"
-    contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
-    annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
-    annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF,contig_sort_path=contig_sort,bam_path=args.bam)
+
     
     inputVCF=outputVCF
     #add genmod annotation
