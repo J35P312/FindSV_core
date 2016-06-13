@@ -62,9 +62,13 @@ rm {output_vcf}.unsorted"""
     VEP="perl {vep_path} --cache --force_overwrite --poly b -i {input_vcf} -o {output_vcf} --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n"
     UPPMAX_VEP="variant_effect_predictor.pl --cache --force_overwrite --poly b -i {input_vcf}  -o {output_vcf} --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n"
     #the genmod section
-    GENMOD="genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}\n"
+    GENMOD="""genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}.unsorted
+python {genmod_sort_path} --vcf {output_vcf}.unsorted > {output_vcf}
+rm {output_vcf}.unsorted
+
+"""
     merge="python {merge_vcf_path} --merge --overlap 0.999 --vcf {input_vcf} > {output_vcf}"
-    sort="""python {contig_sort_path} --vcf {input_vcf}.unsorted --bam {bam_path} > {output_vcf}
+    sort="""python {contig_sort_path} --vcf {input_vcf} --bam {bam_path} > {output_vcf}
 rm {input_vcf}
 """
     
