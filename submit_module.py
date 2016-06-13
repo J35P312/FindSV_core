@@ -154,6 +154,12 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         outputVCF=output_prefix+"_vep.vcf"
         annotation += scripts["FindSV"]["annotation"]["VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF)
 
+ #create a cleaned vcf
+    inputVCF=outputVCF
+    outputVCF=output_prefix+"_cleaned.vcf"
+    clean_VCF_path=os.path.join(programDirectory,"internal_scripts","cleanVCF.py")
+    annotation += scripts["FindSV"]["annotation"]["cleaning"].format(output=output_prefix,VCFTOOLS_path=clean_VCF_path,input_vcf=inputVCF,output_vcf=outputVCF)
+    
     #merge the breakpoints
     inputVCF=outputVCF
     if not general_config["UPPMAX"] == "":
@@ -166,18 +172,8 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
     annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
     annotation += scripts["FindSV"]["annotation"]["merge"].format(output=output_prefix,merge_vcf_path=annotation_config["DB"]["DB_script_path"],input_vcf=inputVCF,output_vcf=outputVCF,contig_sort_path=contig_sort,bam_path=args.bam)
+    
     inputVCF=outputVCF
-
-
-    #add frequency database annotation
-    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
-        inputVCF=outputVCF
-        outputVCF=output_prefix+"_frequency.vcf"
-        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
-
-
-
-
     #add genmod annotation
     if not annotation_config["GENMOD"]["GENMOD_rank_model_path"] == "":
         #use the genmod conda module if the user wishes to do so
@@ -186,16 +182,14 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         inputVCF=outputVCF
         outputVCF=output_prefix+"_genmod.vcf"
         annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
-   
- #create a final cleaned vcf
-    outputVCF=output_prefix+"_cleaned.vcf"
-    clean_VCF_path=os.path.join(programDirectory,"internal_scripts","cleanVCF.py")
-    annotation += scripts["FindSV"]["annotation"]["cleaning"].format(output=output_prefix,VCFTOOLS_path=clean_VCF_path,input_vcf=inputVCF,output_vcf=outputVCF)
+
+    #add frequency database annotation
+    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
+        inputVCF=outputVCF
+        outputVCF=output_prefix+"_finished.vcf"
+        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+    
     return(outputVCF,submitSlurmJob( os.path.join(output,"slurm/annotation/annotation_{}.slurm".format(prefix)) , annotation))
-    
-    
-
-
 
 #this function prints the scripts, submits the slurm job, and then returns the jobid
 def submitSlurmJob(path,message):
