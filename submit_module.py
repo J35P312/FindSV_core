@@ -187,6 +187,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
         inputVCF=outputVCF
         outputVCF=output_prefix+"_finished.vcf"
+        annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
         annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
     
     return(outputVCF,submitSlurmJob( os.path.join(output,"slurm/annotation/annotation_{}.slurm".format(prefix)) , annotation))
