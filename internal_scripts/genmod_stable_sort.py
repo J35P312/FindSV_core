@@ -23,7 +23,7 @@ for line in open(args.vcf):
             genmod_score_dictionary[RankScore]=[]
         genmod_score_dictionary[RankScore].append(line)
 
-for score in sorted(genmod_score_dictionary):
+for score in sorted(genmod_score_dictionary,reverse=True):
     for line in genmod_score_dictionary[score]:
         print(line.strip())
 
