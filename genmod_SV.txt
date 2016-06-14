@@ -137,8 +137,8 @@
     string = '5_prime_utr_variant'
 
   [[intron_variant]]
-    score = 0
-    priority = 0
+    score = 5
+    priority = 1
     string = 'intron_variant'
 
   [[3_prime_utr_variant]]
