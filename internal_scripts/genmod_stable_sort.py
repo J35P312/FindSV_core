@@ -24,8 +24,6 @@ for line in open(args.vcf):
         genmod_score_dictionary[RankScore].append(line)
 
 for score in sorted(genmod_score_dictionary):
-    print score
-for score in sorted(genmod_score_dictionary):
     for line in genmod_score_dictionary[score]:
         print(line.strip())
 
