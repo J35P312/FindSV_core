@@ -67,7 +67,7 @@ python {genmod_sort_path} --vcf {output_vcf}.unsorted > {output_vcf}
 rm {output_vcf}.unsorted
 
 """
-    merge="python {merge_vcf_path} --merge --overlap 0.999 --vcf {input_vcf} > {output_vcf}"
+    merge="python {merge_vcf_path} --merge --overlap 1 --vcf {input_vcf} > {output_vcf}"
     sort="""python {contig_sort_path} --vcf {input_vcf} --bam {bam_path} > {output_vcf}
 rm {input_vcf}
 """
