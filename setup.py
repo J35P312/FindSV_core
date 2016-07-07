@@ -109,21 +109,14 @@ def UPPMAX(programDirectory):
     #install FT and the conda environments
     config=FT_install(config,programDirectory,True)
     config=conda_environments(config,programDirectory)
-    
-    print("leave blank to exit setup, enter anything else to continue setting up path to the annotation tools and references")
-    #the user may choose the set up everything manually(probably faster for the experienced user)
-    if raw_input() == "":
-        print("installation finished, please set up the path to cnvnators reference directory")
-        print("also add the frequency DB path, and genmod ini file path, or these annotation tools will be skipped")
-    #the user may also choose to go through the last options step by step
-    else:
-        config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
-        config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
-        config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
-        config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
-        config["FindSV"]["general"]["account"]=questions("account")
-        config["FindSV"]["general"]["output"]=questions("output")
-        print("installation complete!")
+    print("installation finished!\n answer the following questions in order to setup FindSV correctly")
+    config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
+    config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
+    config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
+    config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
+    config["FindSV"]["general"]["account"]=questions("account")
+    config["FindSV"]["general"]["output"]=questions("output")
+    print("Done!")
     f = open(os.path.join(programDirectory,"config.txt"), 'w')
     f.write(yaml.dump(config).strip())
 
@@ -132,25 +125,19 @@ def conda(programDirectory):
     config=readconfig(0,os.path.join(programDirectory,"config.txt"));
     #install the conda environments
     config=conda_environments(config,programDirectory)
-    print("leave blank to exit setup, enter anything else to continue setting up path to the annotation tools and references")
-    #the user may choose the set up everything manually(probably faster for the experienced user)
-    if raw_input() == "":
-        print("installation finished, to properly run FindSV, the path to cnvnator,cnvnator2vcf.pl, and FindTranslocations must be added to the config file")
-        print("also add the frequency DB path, and genmod ini file path, or these annotation tools will be skipped")
-    #the user may also choose to go through the last options step by step
-    else:
-        config["FindSV"]["calling"]["FT"]["FT_path"]=questions("FT_path")
-        config["FindSV"]["annotation"]["DB"]["DB_script_path"]=questions("DB_script_path")
-        config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=questions("CNVnator_path")
-        config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=questions("CNVnator2vcf_path")
-        config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
-        config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=questions("ROOTSYS")
-        config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
-        config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
-        config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
-        config["FindSV"]["general"]["account"]=questions("account")
-        config["FindSV"]["general"]["output"]=questions("output")
-        print("installation complete!")
+    print("installation finished!\n answer the following questions in order to setup FindSV correctly")
+    config["FindSV"]["calling"]["FT"]["FT_path"]=questions("FT_path")
+    config["FindSV"]["annotation"]["DB"]["DB_script_path"]=questions("DB_script_path")
+    config["FindSV"]["calling"]["CNVnator"]["CNVnator_path"]=questions("CNVnator_path")
+    config["FindSV"]["calling"]["CNVnator"]["CNVnator2vcf_path"]=questions("CNVnator2vcf_path")
+    config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
+    config["FindSV"]["calling"]["CNVnator"]["ROOTSYS"]=questions("ROOTSYS")
+    config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
+    config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
+    config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
+    config["FindSV"]["general"]["account"]=questions("account")
+    config["FindSV"]["general"]["output"]=questions("output")
+    print("Done!")
     
     f = open(os.path.join(programDirectory,"config.txt"), 'w')
     f.write(yaml.dump(config).strip())
@@ -164,18 +151,15 @@ def auto(programDirectory,args):
     config=FT_install(config,programDirectory,True)
     #install cnvnator
     config=cnvnator_install(config,programDirectory,args)
-    print("leave blank to exit setup, enter anything else to continue setting up path to the annotation tools and references")
-    if raw_input() == "":
-        print("installation finished!")
-        print("Add the frequency DB path, and genmod ini file path, or these annotation tools will be skipped")
-    else:
-        config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
-        config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
-        config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
-        config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
-        config["FindSV"]["general"]["account"]=questions("account")
-        config["FindSV"]["general"]["output"]=questions("output")
+    print("installation finished!\n answer the following questions in order to setup FindSV correctly")
+
+    config["FindSV"]["calling"]["CNVnator"]["reference_dir"]=questions("reference_dir")
+    config["FindSV"]["annotation"]["GENMOD"]["GENMOD_rank_model_path"]=questions("GENMOD_rank_model_path")
+    config["FindSV"]["annotation"]["DB"]["DB_path"]=questions("DB_path")
+    config["FindSV"]["annotation"]["VEP"]["cache_dir"]=questions("cache_dir")
+    config["FindSV"]["general"]["account"]=questions("account")
+    config["FindSV"]["general"]["output"]=questions("output")
         
-        print("installation complete!")
+    print("Done!")
     f = open(os.path.join(programDirectory,"config.txt"), 'w')
     f.write(yaml.dump(config).strip())
