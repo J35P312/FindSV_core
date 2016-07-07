@@ -14,17 +14,45 @@ or skip the --output flag to put the output in the directory given py the config
 
 Installation
 ============
-Conda install
-prerequisites
-    Conda
+prerequisites: Conda, python 2.7.11
 
-        use the command:  
+The FindSV pipeline is setup using the install command. This command generates a config file. FindSV will not allow the user to start the analysis before the installation is finished.
+
+To install FindSV, use the following command:
+
                 python FindSV.py --install
 
-        choose the install mode that suits your application the best. For exmple:
-                python FindSV.py --install UPPMAX
+choose the install mode that suits your application the best. For exmple:
 
-to run FindSV-core on the uppmax system.
+                python FindSV.py --install --UPPMAX
+
+this will setup FindSV to run on the uppmax system. FindSV may be installed using one out of four distinct modes:
+
+        UPPMAX:
+                The most convenient setting, this mode will configure FindSV to run on the UPPMAX cluster
+                python FindSV.py --install --UPPMAX
+                
+        auto:
+                Installs everything, this mode may be run in three sub settings, to run CNVnator the ROOT library must be setup. To do so, the auto option is run using ne out of three different settings:
+                standard:
+                        tries to match the server OS with a precompiled version of ROOT.
+                        python FindSV.py --install --auto
+                no_root
+                        skips the installation of root, FindSV assumes root is installed according to the ROOT manual:
+                        python FindSV.py --install --auto --no_root
+                
+                compile_root
+                        If FindSV is unnable to find a suitable pre compiled root package, and the user has not installed root already. FindSV will download the source code of root and compile it.
+                        python FindSV.py --install --auto --compile_root
+                
+        conda:
+                Installs the conda environments required by FindSV, the pah to callers and other tools is added manually
+                python FindSV.py --install --conda
+        
+        manual:
+                nohing is installed, an empty config file is generated, the user must configure this file manually.
+                python FindSV.py --install --manual
+
 
 Restart module
 ============
