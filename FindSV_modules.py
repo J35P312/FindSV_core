@@ -71,7 +71,7 @@ rm {output_vcf}.unsorted
     sort="""python {contig_sort_path} --vcf {input_vcf} --bam {bam_path} > {output_vcf}
 rm {input_vcf}
 """
-    annotator="python {annotator_path} --folder {annotator_path} --vcf {input_vcf} > {output_vcf}"
+    annotator="python {annotator_path} --folder {folder_path} --vcf {input_vcf} > {output_vcf}"
     
     cleaning="python {VCFTOOLS_path} --vcf {input_vcf} > {output_vcf} \n"
     filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort":sort,"annotator":annotator}
