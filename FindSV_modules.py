@@ -65,15 +65,16 @@ rm {output_vcf}.unsorted"""
     GENMOD="""genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}.unsorted
 python {genmod_sort_path} --vcf {output_vcf}.unsorted > {output_vcf}
 rm {output_vcf}.unsorted
-
+   
 """
     merge="python {merge_vcf_path} --merge --overlap 1 --vcf {input_vcf} > {output_vcf}"
     sort="""python {contig_sort_path} --vcf {input_vcf} --bam {bam_path} > {output_vcf}
 rm {input_vcf}
 """
+    annotator="python {annotator_path} --folder {annotator_path} --vcf {input_vcf} > {output_vcf}"
     
     cleaning="python {VCFTOOLS_path} --vcf {input_vcf} > {output_vcf} \n"
-    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort":sort}
+    filter={"header":annotation_header,"VEP":VEP,"UPPMAX_VEP":UPPMAX_VEP,"DB":DB,"GENMOD":GENMOD,"merge":merge,"cleaning":cleaning,"sort":sort,"annotator":annotator}
     
     
     scripts={"FindSV":{"calling":calling,"annotation":filter,"combine":combine,"header":header,"UPPMAX":uppmax,"afterok":"\n#SBATCH -d afterok:{slurm_IDs}\n","ROOTSYS":ROOTPATH,"conda":conda}}

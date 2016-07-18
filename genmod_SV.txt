@@ -4,7 +4,7 @@
 
 [Categories]
  [[Consequence]]
-   category_aggregation = max
+   category_aggregation = sum
 
 [MostSevereConsequence]
   field = INFO
@@ -198,4 +198,26 @@
 
   [[not_reported]]
     score = 0
-
+    
+    
+[OMIM]
+  field = INFO
+  data_type = string
+  category = Consequence
+  record_rule = max
+  separators = '|'
+  info_key = Omim
+  description = reported Omim gene
+  
+  [[Found]]
+    score = 5
+    priority = 0
+    string = 'Present'
+    
+  [[None]]
+    score = 0
+    priority = 0
+    string = 'None'
+    
+  [[not_reported]]
+    score = 0

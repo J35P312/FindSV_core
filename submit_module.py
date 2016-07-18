@@ -181,6 +181,13 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
 
     
     inputVCF=outputVCF
+    outputVCF=output_prefix+"_annotator.vcf"
+    #use annotator to add omim information
+    annotator=os.path.join(programDirectory,"internal_scripts","the_annotator.py")
+    annotator_db=os.path.join(programDirectory,"gene_keys")
+    annotation += scripts["FindSV"]["annotation"]["annotator"].format(annotator_path=annotator,folder_path=annotator_db,input_vcf=inputVCF,output_vcf=outputVCF)
+    
+    inputVCF=outputVCF
     #add genmod annotation
     if not annotation_config["GENMOD"]["GENMOD_rank_model_path"] == "":
         #use the genmod conda module if the user wishes to do so
