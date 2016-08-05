@@ -196,7 +196,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         inputVCF=outputVCF
         outputVCF=output_prefix+"_genmod.vcf"
         genmod_sort=os.path.join(programDirectory,"internal_scripts","genmod_stable_sort.py")
-        annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_sort_path=genmod_sort,genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
+        annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
 
     #add frequency database annotation
     if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
