@@ -102,7 +102,7 @@ def combine_module(args,config,output,scripts,programDirectory,input_vcf,sbatch_
     output_prefix=os.path.join(output,prefix)
     job_name="combine_{}".format(prefix)
     process_files=os.path.join(output,"slurm/combine/",job_name)
-    merge_VCF_path=os.path.join(programDirectory,"internal_scripts","mergeVCF.py")
+    merge_VCF_path=annotation_config["DB"]["DB_script_path"]
     contig_sort=os.path.join(programDirectory,"internal_scripts","contigSort.py")
     combine=scripts["FindSV"]["header"].format(account=account,time="3:00:00",name=job_name,filename=process_files)
     #if we are on Uppmax, the samtools module is loaded, otherise it is assumed to be correctly installed
