@@ -191,7 +191,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     #add frequency database annotation
     if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
         inputVCF=outputVCF
-        outputVCF=output_prefix+"_finished.vcf"
+        outputVCF=output_prefix+"_SVDB.vcf"
         annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
         annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)    
     
@@ -202,7 +202,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         if not config["FindSV"]["conda"]["samtools"] == "":
             annotation +=scripts["FindSV"]["conda"].format(environment="GENMOD_FINDSV")
         inputVCF=outputVCF
-        outputVCF=output_prefix+"_genmod.vcf"
+        outputVCF=output_prefix+"_finished.vcf"
         genmod_sort=os.path.join(programDirectory,"internal_scripts","genmod_stable_sort.py")
         annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
 
