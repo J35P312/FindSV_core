@@ -187,6 +187,14 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     annotator_db=os.path.join(programDirectory,"gene_keys")
     annotation += scripts["FindSV"]["annotation"]["annotator"].format(annotator_path=annotator,folder_path=annotator_db,input_vcf=inputVCF,output_vcf=outputVCF)
     
+    
+    #add frequency database annotation
+    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
+        inputVCF=outputVCF
+        outputVCF=output_prefix+"_finished.vcf"
+        annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
+        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)    
+    
     inputVCF=outputVCF
     #add genmod annotation
     if not annotation_config["GENMOD"]["GENMOD_rank_model_path"] == "":
@@ -198,12 +206,7 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
         genmod_sort=os.path.join(programDirectory,"internal_scripts","genmod_stable_sort.py")
         annotation += scripts["FindSV"]["annotation"]["GENMOD"].format(genmod_score_path=annotation_config["GENMOD"]["GENMOD_rank_model_path"],output=output_prefix,input_vcf=inputVCF,output_vcf=outputVCF)
 
-    #add frequency database annotation
-    if not annotation_config["DB"]["DB_script_path"] == "" and not annotation_config["DB"]["DB_path"] == "":
-        inputVCF=outputVCF
-        outputVCF=output_prefix+"_finished.vcf"
-        annotation +=scripts["FindSV"]["conda"].format(environment="numpy_FINDSV")
-        annotation += scripts["FindSV"]["annotation"]["DB"].format(query_script=annotation_config["DB"]["DB_script_path"],output=output_prefix,db_folder_path=annotation_config["DB"]["DB_path"],input_vcf=inputVCF,output_vcf=outputVCF)
+
     
     return(outputVCF,submitSlurmJob( os.path.join(output,"slurm/annotation/annotation_{}.slurm".format(prefix)) , annotation))
 
