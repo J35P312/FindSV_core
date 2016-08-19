@@ -59,9 +59,9 @@ rm {output_vcf}.unsorted"""
     #the DB section
     DB="python {query_script} --query --query_vcf {input_vcf} --db {db_folder_path} > {output_vcf}\n"
     #the vep section
-    VEP="perl {vep_path} --cache --force_overwrite --poly b -i {input_vcf} -o {output_vcf}.tmp --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n{clear_vep_path} {output_vcf}.tmp > {output_vcf}\nrm {output_vcf}.tmp"
+    VEP="perl {vep_path} --cache --force_overwrite --poly b -i {input_vcf} -o {output_vcf}.tmp --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n{clear_vep_path} {output_vcf}.tmp > {output_vcf}\nrm {output_vcf}.tmp\n"
     
-    UPPMAX_VEP="variant_effect_predictor.pl --cache --force_overwrite --poly b -i {input_vcf}  -o {output_vcf}.tmp --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n{clear_vep_path} {output_vcf}.tmp > {output_vcf}\nrm {output_vcf}.tmp"
+    UPPMAX_VEP="variant_effect_predictor.pl --cache --force_overwrite --poly b -i {input_vcf}  -o {output_vcf}.tmp --buffer_size 5 --port {port} --vcf --per_gene --format vcf  {cache_dir} -q\n{clear_vep_path} {output_vcf}.tmp > {output_vcf}\nrm {output_vcf}.tmp\n"
     #the genmod section
     GENMOD="""genmod score -c {genmod_score_path} {input_vcf}  > {output_vcf}
 
