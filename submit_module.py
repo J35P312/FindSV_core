@@ -152,7 +152,8 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     elif not annotation_config["VEP"]["VEP.pl_path"] == "":
         inputVCF=outputVCF
         outputVCF=output_prefix+"_vep.vcf"
-        annotation += scripts["FindSV"]["annotation"]["VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF)
+        clear_vep_path=os.path.join(programDirectory,"internal_scripts","clear_vep.py")
+        annotation += scripts["FindSV"]["annotation"]["VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF,clear_vep_path=clear_vep_path)
 
  #create a cleaned vcf
     inputVCF=outputVCF

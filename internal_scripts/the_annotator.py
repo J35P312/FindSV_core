@@ -49,15 +49,21 @@ for line in open(args.vcf):
         content=line.strip().split("\t")
         
         genes=fetch_genes(content[7])
-        found_tags=[]
+        found_tags={}
         for gene in genes:
             for gene_list in gene_lists:
                 if gene in gene_lists[gene_list]:
                     if gene_lists[gene_list][gene] == "None":
-                        found_tags.append( gene_list + "=Not_found|"+gene_lists[gene_list][gene])
+                        pass
                     else:
-                        found_tags.append( gene_list + "=Present|"+gene_lists[gene_list][gene])
-                        
-        gene_tags = ";".join(found_tags)
-        content[7] += ";" + gene_tags
+                        if not gene_list in found_tags:
+                            found_tags[gene_list]="Found"
+                             
+                        found_tags[gene_list] += "|"+gene_lists[gene_list][gene]
+        gene_tags=""
+        for tag in found_tags:                
+            gene_tags +=  tag+"=" + found_tags[tag]
+        
+        if len(found_tags) > 0:
+            content[7] += ";" + gene_tags
         print "\t".join(content)

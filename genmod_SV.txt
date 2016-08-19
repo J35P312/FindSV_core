@@ -212,12 +212,7 @@
   [[Found]]
     score = 5
     priority = 0
-    string = 'Present'
-    
-  [[None]]
-    score = 0
-    priority = 0
-    string = 'None'
+    string = 'Found'
     
   [[not_reported]]
     score = 0
