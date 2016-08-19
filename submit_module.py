@@ -147,7 +147,8 @@ def annotation(args,config,output,scripts,programDirectory,outputVCF,combine_ID,
     if not general_config["UPPMAX"] == "" or not config["FindSV"]["conda"]["vep"] == "":
         inputVCF=outputVCF
         outputVCF=output_prefix+"_vep.vcf"
-        annotation += scripts["FindSV"]["annotation"]["UPPMAX_VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF)
+        clear_vep_path=os.path.join(programDirectory,"internal_scripts","clear_vep.py")
+        annotation += scripts["FindSV"]["annotation"]["UPPMAX_VEP"].format(vep_path=annotation_config["VEP"]["VEP.pl_path"],output=output_prefix,port=annotation_config["VEP"]["port"],cache_dir=cache_dir,input_vcf=inputVCF,output_vcf=outputVCF,clear_vep_path=clear_vep_path)
     #if we do not use uppmax or conda and a path to the vep script is added in the config, then use that vep script(otherwise skip vep annotation)
     elif not annotation_config["VEP"]["VEP.pl_path"] == "":
         inputVCF=outputVCF
