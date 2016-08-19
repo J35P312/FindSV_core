@@ -10,9 +10,9 @@ for line in open(sys.argv[1]):
         print line.strip()
         continue
 
-    CSQ= line.split("\t")[7].split("CSQ=")[-1].split(";")[0]
+    CSQ= line.strip().split("\t")[7].split("CSQ=")[-1].split(";")[0]
     vcf_line=line.split("\t")
-    info_field=vcf_line[7].split(";")
+    info_field=vcf_line[7].strip().split(";")
  
 
     CSQ_fields=CSQ.split(",")
